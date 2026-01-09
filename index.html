@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Diskon</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #1c1b1f;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #fdd835;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 3px;
+            background: #4caf50;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .tech-stack {
+            color: #5f6368;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .empty-illustration {
+            width: 200px;
+            height: 150px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .empty-illustration::before {
+            content: '🎫';
+            font-size: 64px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            color: #5f6368;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f8f4;
+        }
+
+        .btn-danger {
+            background: #ef5350;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53935;
+        }
+
+        .discount-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .discount-count {
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .search-filter-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #4caf50;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5f6368;
+        }
+
+        .outlet-select {
+            padding: 12px 36px 12px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%235f6368' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        .api-config-section {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .api-config-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #1c1b1f;
+            margin-bottom: 12px;
+        }
+
+        .api-config-header .material-icons {
+            color: #4caf50;
+        }
+
+        .api-config-content {
+            margin-top: 12px;
+        }
+
+        .api-label {
+            display: block;
+            color: #5f6368;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .api-input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .api-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .api-input:focus {
+            border-color: #4caf50;
+        }
+
+        .outlet-icon {
+            margin-right: 8px;
+        }
+
+        .discount-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .discount-table th {
+            text-align: left;
+            padding: 12px;
+            color: #5f6368;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .discount-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .discount-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .discount-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .discount-value {
+            color: #1c1b1f;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            padding: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5f6368;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #5f6368;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #4caf50;
+        }
+
+        .form-input.error {
+            border-color: #ef5350;
+        }
+
+        .error-message {
+            color: #ef5350;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .discount-type-toggle {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #dadce0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .confirmation-modal {
+            text-align: center;
+        }
+
+        .confirmation-modal h3 {
+            margin-bottom: 16px;
+        }
+
+        .confirmation-modal ul {
+            text-align: left;
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e7d32;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 2000;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: #5f6368;
+        }
+
+        @media (max-width: 768px) {
+            .search-filter-row {
+                flex-direction: column;
+            }
+
+            .discount-table {
+                font-size: 13px;
+            }
+
+            .discount-table th,
+            .discount-table td {
+                padding: 8px;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                </div>
+                <h1>TES FRONTEND WEB DEVELOPER</h1>
+                
+            </div>
+
+            <!-- Main Content -->
+            <div class="card">
+                <!-- Empty State -->
+                <div v-if="!loading && discounts.length === 0 && !searchQuery" class="empty-state">
+                    <div class="empty-illustration"></div>
+                    <h2 class="empty-title">Belum Ada Diskon</h2>
+                    <p class="empty-description">Silahkan tambah diskon untuk menarik pelanggan dan meningkatkan penjualan.</p>
+                    <button class="btn btn-primary" @click="openAddModal">
+                        <span class="material-icons">add</span>
+                        Tambah diskon
+                    </button>
+                </div>
+
+                <!-- Discount List -->
+                <div v-else>
+                    <div class="discount-header">
+                        <div>
+                            <h2>Daftar Diskon</h2>
+                            <p class="discount-count">Total jumlah diskon: {{ filteredDiscounts.length }}</p>
+                        </div>
+                        <button class="btn btn-primary" @click="openAddModal">
+                            <span class="material-icons">add</span>
+                            Tambah diskon
+                        </button>
+                    </div>
+
+                    <div class="search-filter-row">
+                        <div class="search-box">
+                            <span class="material-icons search-icon">search</span>
+                            <input 
+                                type="text" 
+                                placeholder="Cari diskon" 
+                                v-model="searchQuery"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- API URL Configuration -->
+                    <div class="api-config-section">
+                        <div class="api-config-header">
+                            <span class="material-icons">storefront</span>
+                            <span>Kopi Anak Bangsa</span>
+                        </div>
+                        <div class="api-config-content">
+                            <label class="api-label">API URL crudcrud.com</label>
+                            <div class="api-input-group">
+                                <input 
+                                    type="text" 
+                                    class="api-input"
+                                    v-model="apiEndpoint"
+                                    placeholder="https://crudcrud.com/api/bc0c.../diskon"
+                                >
+                                <button class="btn btn-primary" @click="updateApiEndpoint">
+                                    Terapkan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="loading" class="loading">
+                        Memuat data...
+                    </div>
+
+                    <table v-else class="discount-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">
+                                    <input 
+                                        type="checkbox" 
+                                        class="checkbox"
+                                        @change="toggleSelectAll"
+                                        :checked="selectedDiscounts.length === filteredDiscounts.length && filteredDiscounts.length > 0"
+                                    >
+                                </th>
+                                <th>Nama Diskon</th>
+                                <th>Nilai Diskon</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="discount in filteredDiscounts" :key="discount._id">
+                                <td>
+                                    <input 
+                                        type="checkbox" 
+                                        class="checkbox"
+                                        :value="discount._id"
+                                        v-model="selectedDiscounts"
+                                    >
+                                </td>
+                                <td>
+                                    <div class="discount-name">
+                                        {{ discount.name }}
+                                        <span v-if="discount.isBaru" class="badge">baru</span>
+                                    </div>
+                                </td>
+                                <td class="discount-value">{{ formatDiscount(discount) }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="icon-btn" @click="openEditModal(discount)" title="Edit">
+                                            <span class="material-icons">edit</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div v-if="selectedDiscounts.length > 0" class="bulk-actions">
+                        <button class="btn btn-secondary" @click="cancelSelection">Batalkan</button>
+                        <button class="btn btn-danger" @click="openDeleteModal">Hapus</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">{{ editingDiscount ? 'Ubah Diskon' : 'Tambah Diskon' }}</h3>
+                    <button class="close-btn" @click="closeModal">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+
+                <form @submit.prevent="saveDiscount">
+                    <div class="form-group">
+                        <label class="form-label">Nama Diskon</label>
+                        <input 
+                            type="text" 
+                            class="form-input"
+                            :class="{ error: errors.name }"
+                            v-model="formData.name"
+                            placeholder="Misal: Diskon opening, diskon akhir tahun"
+                        >
+                        <p v-if="errors.name" class="error-message">{{ errors.name }}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Diskon</label>
+                        <input 
+                            type="number" 
+                            class="form-input"
+                            :class="{ error: errors.value }"
+                            v-model="formData.value"
+                            placeholder="0"
+                        >
+                        <div class="discount-type-toggle">
+                            <button 
+                                type="button" 
+                                class="toggle-btn"
+                                :class="{ active: formData.type === 'percentage' }"
+                                @click="formData.type = 'percentage'"
+                            >
+                                <span class="material-icons">percent</span>
+                                %
+                            </button>
+                            <button 
+                                type="button" 
+                                class="toggle-btn"
+                                :class="{ active: formData.type === 'fixed' }"
+                                @click="formData.type = 'fixed'"
+                            >
+                                Rp
+                            </button>
+                        </div>
+                        <p v-if="errors.value" class="error-message">{{ errors.value }}</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="closeModal">
+                            {{ editingDiscount ? 'Batal' : 'Hapus' }}
+                        </button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
+            <div class="modal confirmation-modal">
+                <h3>Hapus Diskon</h3>
+                <p>Apakah Anda yakin ingin menghapus diskon {{ getDeleteConfirmationText() }}?</p>
+                <ul v-if="selectedDiscounts.length > 0">
+                    <li v-for="id in selectedDiscounts" :key="id">
+                        {{ getDiscountNameById(id) }}
+                    </li>
+                </ul>
+                <p style="margin-top: 8px; color: #5f6368;">Diskon yang dihapus tidak bisa dikembalikan lagi.</p>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @click="closeDeleteModal">Batalkan</button>
+                    <button class="btn btn-danger" @click="confirmDelete">Hapus</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div v-if="showToast" class="toast">
+            {{ toastMessage }}
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    // API Configuration
+                    apiBase: 'https://crudcrud.com/api/37ad8a8ffe534257968b14d160ef4413',
+                    apiEndpoint: 'https://crudcrud.com/api/37ad8a8ffe534257968b14d160ef4413/diskon',
+                    
+                    // Data
+                    discounts: [],
+                    
+                    // UI State
+                    loading: false,
+                    showModal: false,
+                    showDeleteModal: false,
+                    showToast: false,
+                    toastMessage: '',
+                    
+                    // Filters
+                    searchQuery: '',
+                    
+                    // Selection
+                    selectedDiscounts: [],
+                    
+                    // Form
+                    editingDiscount: null,
+                    formData: {
+                        name: '',
+                        value: '',
+                        type: 'percentage',
+                        isBaru: false
+                    },
+                    errors: {}
+                }
+            },
+            computed: {
+                filteredDiscounts() {
+                    let filtered = this.discounts;
+                    
+                    // Filter by search
+                    if (this.searchQuery) {
+                        filtered = filtered.filter(d => 
+                            d.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+                    }
+                    
+                    return filtered;
+                }
+            },
+            methods: {
+                async fetchDiscounts() {
+                    this.loading = true;
+                    try {
+                        const response = await fetch(this.apiEndpoint);
+                        if (response.ok) {
+                            this.discounts = await response.json();
+                        } else {
+                            this.showNotification('Gagal memuat data. Periksa API URL Anda.');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching discounts:', error);
+                        this.showNotification('Gagal memuat data diskon. Periksa API URL Anda.');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                updateApiEndpoint() {
+                    // Validate URL
+                    if (!this.apiEndpoint.trim()) {
+                        this.showNotification('API URL tidak boleh kosong');
+                        return;
+                    }
+                    
+                    // Extract base URL if full endpoint is provided
+                    if (this.apiEndpoint.includes('/diskon')) {
+                        this.apiBase = this.apiEndpoint.replace('/diskon', '');
+                    } else {
+                        this.apiBase = this.apiEndpoint;
+                        this.apiEndpoint = this.apiEndpoint + '/diskon';
+                    }
+                    
+                    // Save to localStorage
+                    localStorage.setItem('apiEndpoint', this.apiEndpoint);
+                    localStorage.setItem('apiBase', this.apiBase);
+                    
+                    this.showNotification('API URL berhasil diperbarui');
+                    this.fetchDiscounts();
+                },
+                
+                openAddModal() {
+                    this.editingDiscount = null;
+                    this.formData = {
+                        name: '',
+                        value: '',
+                        type: 'percentage',
+                        isBaru: false
+                    };
+                    this.errors = {};
+                    this.showModal = true;
+                },
+                
+                openEditModal(discount) {
+                    this.editingDiscount = discount;
+                    this.formData = {
+                        name: discount.name,
+                        value: discount.value,
+                        type: discount.type,
+                        isBaru: discount.isBaru
+                    };
+                    this.errors = {};
+                    this.showModal = true;
+                },
+                
+                closeModal() {
+                    this.showModal = false;
+                    this.editingDiscount = null;
+                    this.formData = {
+                        name: '',
+                        value: '',
+                        type: 'percentage',
+                        isBaru: false
+                    };
+                    this.errors = {};
+                },
+                
+                validateForm() {
+                    this.errors = {};
+                    
+                    if (!this.formData.name.trim()) {
+                        this.errors.name = 'Nama diskon tidak boleh kosong';
+                    }
+                    
+                    if (!this.formData.value || this.formData.value <= 0) {
+                        this.errors.value = 'Diskon tidak boleh kosong';
+                    }
+                    
+                    return Object.keys(this.errors).length === 0;
+                },
+                
+                async saveDiscount() {
+                    if (!this.validateForm()) return;
+                    
+                    const discountData = {
+                        name: this.formData.name,
+                        value: parseFloat(this.formData.value),
+                        type: this.formData.type,
+                        isBaru: this.formData.isBaru
+                    };
+                    
+                    try {
+                        if (this.editingDiscount) {
+                            // Update existing discount
+                            const response = await fetch(`${this.apiBase}/diskon/${this.editingDiscount._id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(discountData)
+                            });
+                            
+                            if (response.ok) {
+                                this.showNotification(`${this.formData.name} berhasil diubah.`);
+                                await this.fetchDiscounts();
+                            } else {
+                                this.showNotification('Gagal mengubah diskon');
+                            }
+                        } else {
+                            // Create new discount
+                            const response = await fetch(`${this.apiBase}/diskon`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(discountData)
+                            });
+                            
+                            if (response.ok) {
+                                this.showNotification(`${this.formData.name} berhasil ditambahkan.`);
+                                await this.fetchDiscounts();
+                            } else {
+                                this.showNotification('Gagal menambahkan diskon');
+                            }
+                        }
+                        
+                        this.closeModal();
+                    } catch (error) {
+                        console.error('Error saving discount:', error);
+                        this.showNotification('Gagal menyimpan diskon');
+                    }
+                },
+                
+                openDeleteModal() {
+                    this.showDeleteModal = true;
+                },
+                
+                closeDeleteModal() {
+                    this.showDeleteModal = false;
+                },
+                
+                async confirmDelete() {
+                    try {
+                        // Delete all selected discounts
+                        for (const id of this.selectedDiscounts) {
+                            await fetch(`${this.apiBase}/diskon/${id}`, {
+                                method: 'DELETE'
+                            });
+                        }
+                        
+                        const count = this.selectedDiscounts.length;
+                        const name = count === 1 ? this.getDiscountNameById(this.selectedDiscounts[0]) : '';
+                        
+                        this.showNotification(
+                            count === 1 
+                                ? `${name} berhasil dihapus.`
+                                : `${count} diskon berhasil dihapus.`
+                        );
+                        
+                        this.selectedDiscounts = [];
+                        await this.fetchDiscounts();
+                        this.closeDeleteModal();
+                    } catch (error) {
+                        console.error('Error deleting discounts:', error);
+                        this.showNotification('Gagal menghapus diskon');
+                    }
+                },
+                
+                toggleSelectAll(event) {
+                    if (event.target.checked) {
+                        this.selectedDiscounts = this.filteredDiscounts.map(d => d._id);
+                    } else {
+                        this.selectedDiscounts = [];
+                    }
+                },
+                
+                cancelSelection() {
+                    this.selectedDiscounts = [];
+                },
+                
+                formatDiscount(discount) {
+                    if (discount.type === 'percentage') {
+                        return `${discount.value}%`;
+                    } else {
+                        return `Rp ${discount.value.toLocaleString('id-ID')}`;
+                    }
+                },
+                
+                getDiscountNameById(id) {
+                    const discount = this.discounts.find(d => d._id === id);
+                    return discount ? discount.name : '';
+                },
+                
+                getDeleteConfirmationText() {
+                    if (this.selectedDiscounts.length === 1) {
+                        return this.getDiscountNameById(this.selectedDiscounts[0]);
+                    } else {
+                        return 'yang dipilih';
+                    }
+                },
+                
+                showNotification(message) {
+                    this.toastMessage = message;
+                    this.showToast = true;
+                    setTimeout(() => {
+                        this.showToast = false;
+                    }, 3000);
+                }
+            },
+            mounted() {
+                // Load saved API endpoint from localStorage
+                const savedEndpoint = localStorage.getItem('apiEndpoint');
+                const savedBase = localStorage.getItem('apiBase');
+                
+                if (savedEndpoint) {
+                    this.apiEndpoint = savedEndpoint;
+                }
+                if (savedBase) {
+                    this.apiBase = savedBase;
+                }
+                
+                this.fetchDiscounts();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
